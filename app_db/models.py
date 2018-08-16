@@ -7,9 +7,10 @@ class User(models.Model):
         (0, '男'),
         (1, '女'),
     )
-    id = models.PositiveIntegerField(primary_key=True)  # 用户ID
+    id = models.AutoField(primary_key=True)  # 用户ID
     role_id = models.ForeignKey('Role', on_delete=models.CASCADE)  # 权限ID
     avatar = models.CharField(max_length=2083)  # 头像
+    real_name = models.CharField(max_length=20)  # 真实姓名
     student_id = models.CharField(max_length=11)  # 学号 用于学生身份认证
     card_id = models.CharField(max_length=18)  # 身份证 用于学生身份认证
     sex = models.PositiveSmallIntegerField(choices=sex_choice)  # 男0 女1
@@ -33,7 +34,7 @@ class Role(models.Model):
         ('normal_user', '普通用户'),
 
     )
-    id = models.PositiveIntegerField(primary_key=True)  # 角色id
+    id = models.AutoField(primary_key=True)  # 角色id
     role_name = models.CharField(max_length=255)  # 角色名称
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
     update_at = models.DateTimeField(auto_now=True)  # 更新时间
@@ -49,7 +50,7 @@ class Role(models.Model):
 
 
 class Permission(models.Model):
-    id = models.PositiveIntegerField(primary_key=True)  # 权限id
+    id = models.AutoField(primary_key=True)  # 权限id
     permission_no = models.CharField(max_length=255, unique=True)  # 权限编号
     permission_name = models.CharField(max_length=255, blank=True)  # 权限名称 用于说明权限（最好不要为空）
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
@@ -65,7 +66,7 @@ class Permission(models.Model):
 
 
 class GoodsType(models.Model):
-    id = models.PositiveIntegerField(primary_key=True)  # 商品分类ID
+    id = models.AutoField(primary_key=True)  # 商品分类ID
     name = models.CharField(max_length=20, unique=True)  # 分类名称
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
     update_at = models.DateTimeField(auto_now=True)  # 更新时间
@@ -93,7 +94,7 @@ class Goods(models.Model):
         (1, '交易中'),
         (2, '已出售'),
     )
-    goods_id = models.PositiveIntegerField(primary_key=True)  # 商品 ID
+    goods_id = models.AutoField(primary_key=True)  # 商品 ID
     title = models.CharField(max_length=30)  # 标题
     description = models.CharField(max_length=3000)  # 商品描述
     picture = models.TextField()  # 图片URL
@@ -118,7 +119,7 @@ class Goods(models.Model):
 
 
 class GoodsMessage(models.Model):
-    msg_id = models.PositiveIntegerField(primary_key=True)  # 留言ID
+    msg_id = models.AutoField(primary_key=True)  # 留言ID
     goods_id = models.ForeignKey('Goods', models.CASCADE)  # 商品ID
     send_user_id = models.ForeignKey('User', models.CASCADE, related_name='it_send_this_message')  # 发表用户ID
     recv_user_id = models.ForeignKey('User', models.CASCADE, related_name='it_recv_this_message')  # 接收用户ID
@@ -136,7 +137,7 @@ class GoodsMessage(models.Model):
 
 
 class ChatRecord(models.Model):
-    msg_id = models.PositiveIntegerField(primary_key=True)  # 留言ID
+    msg_id = models.AutoField(primary_key=True)  # 留言ID
     goods_id = models.ForeignKey('Goods', models.CASCADE)  # 商品ID
     send_user_id = models.ForeignKey('User', models.CASCADE, related_name='it_send_this_record')  # 发表用户ID
     recv_user_id = models.ForeignKey('User', models.CASCADE, related_name='it_recv_this_record')  # 接收用户ID
@@ -154,7 +155,7 @@ class ChatRecord(models.Model):
 
 
 class Follow(models.Model):
-    id = models.PositiveIntegerField(primary_key=True)  # 关注ID
+    id = models.AutoField(primary_key=True)  # 关注ID
     fans_user_id = models.ForeignKey('User', models.CASCADE, related_name='its_fans')  # 粉丝ID
     user_id = models.ForeignKey('User', models.CASCADE, related_name='it_love')  # 被关注者 ID
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
@@ -171,7 +172,7 @@ class Follow(models.Model):
 
 
 class Collection(models.Model):
-    id = models.PositiveIntegerField(primary_key=True)  # 收藏记录ID
+    id = models.AutoField(primary_key=True)  # 收藏记录ID
     user_id = models.ForeignKey('User', models.CASCADE)  # 用户ID
     goods_id = models.ForeignKey('Goods', models.CASCADE)  # 商品ID
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间

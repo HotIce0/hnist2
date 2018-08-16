@@ -124,3 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.exmail.qq.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'system@hnist2.cn'
+EMAIL_HOST_PASSWORD = 'Zengguang577X...'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = '湖理闲 <system@hnist2.cn>'
