@@ -1,6 +1,10 @@
 from django import forms
 import re
 
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
+from app_db import models
+
 # 注册表单
 from app_auth import student_auth
 
@@ -25,6 +29,30 @@ class RegisterForm(forms.Form):
             if not auth_res:
                 self.add_error('id_card', '学生信息不一致')
                 is_valid = False
+
+            # 验证用户名是否已经存在
+            try:
+                models.User.objects.get(name=self.data.get('user_name'))
+                self.add_error('user_name', '该用户名已存在')
+                is_valid = False
+            except ObjectDoesNotExist:
+                pass
+
+            # 验证身份证是否已经存在
+            try:
+                models.User.objects.get(card_id=self.data.get('id_card'))
+                self.add_error('id_card', '该身份证已被注册')
+                is_valid = False
+            except ObjectDoesNotExist:
+                pass
+
+            # # 验证邮箱是否已存在
+            # try:
+            #     models.User.objects.get(email=self.data.get('email'))
+            # except ObjectDoesNotExist:
+            #     self.add_error('email', '该邮箱已存在')
+            #     is_valid = False
+
         return auth_res if is_valid else is_valid
 
     # 用户名（昵称）
@@ -44,6 +72,7 @@ class RegisterForm(forms.Form):
     # 再次输入密码
     re_password = forms.CharField(required=True,
                                   max_length=16,
+                                  min_length=6,
                                   widget=forms.PasswordInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
                                   )
     # 真实姓名

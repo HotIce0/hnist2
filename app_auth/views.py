@@ -1,11 +1,11 @@
 import re
 
+from django.contrib.auth.hashers import make_password, check_password, is_password_usable
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.core.mail import send_mail
 from .form import RegisterForm
-# Create your views here.
 from app_db import models
+# Create your views here.
 
 
 def register(request):
@@ -22,10 +22,18 @@ def register(request):
             # print(form.non_field_errors())
             # 验证通过，新增用户，默认角色为普通用户
             user = models.User()
-            form.cleaned_data.get('')
-
-
-            return HttpResponse('验证正确')
+            user.name = form.cleaned_data.get('user_name')
+            user.avatar = '默认头像url'
+            user.real_name = form.cleaned_data.get('real_name')
+            user.student_id = form.cleaned_data.get('stu_id')
+            user.card_id = form.cleaned_data.get('id_card')
+            user.sex = 0 if auth_res.get('is_man') else 1  # 0是男生，1是女生
+            user.email = form.cleaned_data.get('email')
+            user.password = make_password(form.cleaned_data.get('password'))
+            # 存储用户数据到数据库
+            user.save()
+            # 跳转到登陆页面
+            return HttpResponse('注册成功!')
     # 验证未通过
     return render(request, 'app_auth/register.html', {
         'form': form

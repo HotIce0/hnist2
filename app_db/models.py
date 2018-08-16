@@ -8,13 +8,14 @@ class User(models.Model):
         (1, '女'),
     )
     id = models.AutoField(primary_key=True)  # 用户ID
-    role_id = models.ForeignKey('Role', on_delete=models.CASCADE)  # 权限ID
+    role = models.ForeignKey('Role', on_delete=models.CASCADE, default=1)  # 权限ID
     avatar = models.CharField(max_length=2083)  # 头像
     real_name = models.CharField(max_length=20)  # 真实姓名
     student_id = models.CharField(max_length=11)  # 学号 用于学生身份认证
-    card_id = models.CharField(max_length=18)  # 身份证 用于学生身份认证
+    card_id = models.CharField(max_length=18, unique=True)  # 身份证 用于学生身份认证
     sex = models.PositiveSmallIntegerField(choices=sex_choice)  # 男0 女1
-    email = models.EmailField(unique=True)  # E-mail
+    email = models.EmailField()  # E-mail
+    is_active = models.BooleanField(default=0)  # 账号是否已激活（邮箱验证）
     name = models.CharField(max_length=20, unique=True)  # 用户名
     password = models.CharField(max_length=256)  # 密码
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
@@ -30,15 +31,16 @@ class User(models.Model):
 
 
 class Role(models.Model):
-    permission = (
-        ('normal_user', '普通用户'),
-
-    )
+    # permission = (
+    #     ('normal_user', '普通用户'),
+    #
+    # )
     id = models.AutoField(primary_key=True)  # 角色id
     role_name = models.CharField(max_length=255)  # 角色名称
     create_at = models.DateTimeField(auto_now_add=True)  # 创建时间
     update_at = models.DateTimeField(auto_now=True)  # 更新时间
-    role_permission = models.TextField(choices=permission, default='普通用户')  # 角色拥有的权限ID(json数组形式存储permission_no)
+    # role_permission = models.TextField(choices=permission, default='[]')  # 角色拥有的权限ID(json数组形式存储permission_no)
+    role_permission = models.TextField(default='[]')  # 角色拥有的权限ID(json数组形式存储permission_no)
 
     def __str__(self):
         return self.role_name
