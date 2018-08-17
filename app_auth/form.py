@@ -1,6 +1,7 @@
 from django import forms
 import re
 
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from app_db import models
@@ -9,11 +10,11 @@ from app_db import models
 from app_auth import student_auth
 
 
-# 验证成功，测返回用户的认证信息
 class RegisterForm(forms.Form):
+    # 验证成功，测返回用户的认证信息
     def is_valid(self):
+        is_valid = True
         if super().is_valid():
-            is_valid = True
             # 验证身份证字段
             if re.match(r'^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$', self.data.get('id_card')) is None:
                 self.add_error('id_card', '身份证号码格式有误')
@@ -45,7 +46,8 @@ class RegisterForm(forms.Form):
                 is_valid = False
             except ObjectDoesNotExist:
                 pass
-
+        else:
+            is_valid = False
             # # 验证邮箱是否已存在
             # try:
             #     models.User.objects.get(email=self.data.get('email'))
@@ -83,7 +85,6 @@ class RegisterForm(forms.Form):
     # 学号
     stu_id = forms.CharField(required=True,
                              max_length=11,
-                             min_length=11,
                              widget=forms.TextInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
                              )
     # 身份证
@@ -91,3 +92,41 @@ class RegisterForm(forms.Form):
                               max_length=18,
                               widget=forms.TextInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
                               )
+
+
+class LoginForm(forms.Form):
+    def is_valid(self):
+        is_valid = True
+        if super().is_valid():
+            # 账号密码匹配
+            try:
+                user = models.User.objects.get(student_id=self.data.get('stu_id'))
+                # 判断密码是否一致
+                if not check_password(self.data.get('password'), user.password):
+                    self.add_error('password', '密码错误')
+                    is_valid = False
+            except ObjectDoesNotExist:
+                self.add_error('stu_id', '账号未注册或者无效')
+                is_valid = False
+        else:
+            is_valid = False
+
+        return is_valid
+
+    # 学号
+    stu_id = forms.CharField(required=True,
+                             max_length=11,
+                             widget=forms.TextInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
+                             )
+    # 密码
+    password = forms.CharField(required=True,
+                               max_length=16,
+                               widget=forms.PasswordInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
+                               )
+
+
+class ActiveEmailSendForm(forms.Form):
+    email = forms.EmailField(required=True,
+                             max_length=20,
+                             widget=forms.TextInput(attrs={'class': 'form-control ', 'placeholder': '必填'})
+                             )

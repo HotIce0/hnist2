@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 自定义登陆认证中间件
+    'app_auth.middleware.AuthenticationMiddleware'
 ]
 
 ROOT_URLCONF = 'hnist2.urls'
@@ -123,7 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+# 邮件发送设置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.exmail.qq.com'
 EMAIL_PORT = 465
@@ -131,3 +134,5 @@ EMAIL_HOST_USER = 'system@hnist2.cn'
 EMAIL_HOST_PASSWORD = 'Zengguang577X...'
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = '湖理闲 <system@hnist2.cn>'
+# 设置会话引擎(cache && db)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'

@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from app_auth import views
 
 app_name = 'auth'
 urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
+    path('active/', views.active, name='active'),   # 发送激活邮件路由
+    path('logout/', views.logout, name='logout'),
+    path('active_email/<str:token>/', views.active_email, name='active_email')  # 邮箱激活token验证路由
 ]
